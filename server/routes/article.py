@@ -3,7 +3,7 @@ from flask import Blueprint, request, jsonify
 from server.db import Session
 from server.repositories.techcrunch_repository import ArticleRepository
 
-article_bp = Blueprint('article', __name__, url_prefix='/v1/articles')
+article_bp = Blueprint('article', __name__, url_prefix='/api/v1/articles')
 
 
 @article_bp.route('/')
@@ -18,7 +18,7 @@ def get_articles():
     """
     offset = int(request.args.get('offset', 0))
     limit = int(request.args.get('limit', 10))
-    if 'author_name' in request.args:
+    if 'author_name' in request.args and len(str(request.args['author_name'])):
         author_name = str(request.args['author_name'])
         return jsonify(ArticleRepository(Session()).get_articles_by_author_name(author_name, offset, limit))
     else:
