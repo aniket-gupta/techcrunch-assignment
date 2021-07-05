@@ -1,6 +1,8 @@
 from celery import Celery
 
+from config import Config
+
 celery_app = Celery('techcrunch',
-                    broker='redis://localhost:6379',
-                    backend='redis://localhost:6379',
+                    broker=Config.CELERY_BROKER,
+                    backend=Config.CELERY_BACKEND,
                     include=['server.celery.tasks'])

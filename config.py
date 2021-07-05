@@ -13,3 +13,5 @@ class Config:
     DATABASE_URI = environ.get('DATABASE_CONNECTION_URI', 'postgresql://postgres:@localhost:5432/techcrunch')
     CREATE_TABLES = bool(environ.get('CREATE_TABLES', "true"))
     NUM_ARTICLES = int(environ.get('NUM_ARTICLES', "100"))
+    CELERY_BROKER = environ.get('CELERY_BROKER', 'redis://localhost:6379')
+    CELERY_BACKEND = environ.get('CELERY_BACKEND', 'redis://localhost:6379')

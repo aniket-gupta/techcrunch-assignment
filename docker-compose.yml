@@ -1,0 +1,56 @@
+version: '3.8'
+
+services:
+  redis:
+    image: redis:6-alpine
+
+  postgres:
+    image: postgres:13.3
+    environment:
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=techcrunch
+
+  server:
+    build: .
+    image: server
+    container_name: server
+    ports:
+      - 5000:5000
+    expose:
+      - 5000
+    command: python run_server.py
+    environment:
+      - DEPLOY_ENV=development
+      - DATABASE_CONNECTION_URI=postgresql://postgres:postgres@postgres:5432/techcrunch
+      - CELERY_BROKER=redis://redis:6379
+      - CELERY_BACKEND=redis://redis:6379
+    depends_on:
+      - postgres
+      - redis
+
+  worker:
+    build: .
+    command: celery -A server.celery worker --loglevel=info
+    environment:
+      - DEPLOY_ENV=development
+      - DATABASE_CONNECTION_URI=postgresql://postgres:postgres@postgres:5432/techcrunch
+      - CELERY_BROKER=redis://redis:6379
+      - CELERY_BACKEND=redis://redis:6379
+    depends_on:
+      - postgres
+      - redis
+
+  task-scheduler:
+    build: .
+    command: python collect_articles.py
+    environment:
+      - DEPLOY_ENV=development
+      - DATABASE_CONNECTION_URI=postgresql://postgres:postgres@postgres:5432/techcrunch
+      - CELERY_BROKER=redis://redis:6379
+      - CELERY_BACKEND=redis://redis:6379
+    depends_on:
+      - postgres
+      - redis
+
+
+
