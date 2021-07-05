@@ -5,4 +5,5 @@ SQLAlchemy==1.4.20
 python-dotenv==0.18.0
 requests==2.25.1
 redis==3.5.3
-beautifulsoup4==4.9.0
+beautifulsoup4==4.9.3
+lxml==4.6.3
