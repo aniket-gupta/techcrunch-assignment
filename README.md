@@ -5,7 +5,29 @@
 - Redis is used as Celery Backend but any Celery supported backend can be used.
 - Postgres is used for persistent storage
 ![alt text](https://github.com/aniket-gupta/techcrunch-assignment/blob/main/doc/architecture-diagram.jpg?raw=true)
+### Data Model
 ![alt text](https://github.com/aniket-gupta/techcrunch-assignment/blob/main/doc/data-model.jpg?raw=true)
+
+## Steps To Run
+- Clone the repo
+```
+git clone https://github.com/aniket-gupta/techcrunch-assignment.git
+```
+- Go to techcrunch-assignment folder
+```
+cd <path to git repo in your local>/techcrunch-assignment
+```
+- Make sure docker is running
+- run docker-compose command as below:
+```
+docker-compose up -d --build
+``` 
+- server should be runnning at localhost:5000. Try below API
+```
+curl --location --request GET 'http://localhost:5000/api/v1/articles'
+```
+
+> Number of articles to be fetched can be configured by Environment variable `NUM_ARTICLES` default is 100
 
 ## HTTP APIs
 ### Get Articles
