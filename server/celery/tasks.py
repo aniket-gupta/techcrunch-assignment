@@ -1,5 +1,7 @@
 from datetime import datetime
 
+from bs4 import BeautifulSoup
+
 from server.celery import celery_app
 from celery.exceptions import Reject
 import requests
@@ -26,11 +28,13 @@ def fetch_post(page_num):
         objects = list()
         for json_post in posts:
             fetch_author.delay(json_post.get('author'), json_post.get("_links", dict()).get('authors', []))
+            title = BeautifulSoup(json_post.get('title', dict()).get('rendered', ""), "lxml").text
+            content = BeautifulSoup(json_post.get('content', dict()).get('rendered', ""), "lxml").text
             post = Article(id=json_post.get('id'),
                            date=json_post.get('date_gmt', datetime.now()),
                            modified=json_post.get('modified_gmt', datetime.now()),
-                           title=json_post.get('title', dict()).get('rendered', ""),
-                           content=json_post.get('content', dict()).get('rendered', ""),
+                           title=title,
+                           content=content,
                            author_id=json_post.get('author')
                            )
             objects.append(post)
@@ -72,10 +76,10 @@ def fetch_author(author_id, alternatives):
 
 
 def save_author(author_data):
-
+    description = BeautifulSoup(author_data.get("cbDescription", ""), "lxml").text
     author = Author(id=author_data.get("id"),
                     name=author_data.get("name"),
-                    description=author_data.get("cbDescription"),
+                    description=description,
                     avatar=author_data.get("cbAvatar"),
                     position=author_data.get('position'),
                     links=author_data.get('links'),

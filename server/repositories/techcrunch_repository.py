@@ -49,6 +49,11 @@ class ArticleRepository(Repository):
 
     def get_articles(self, offset=0, limit=10):
         count = self._session.query(Article).count()
+        if count == 0:
+            return {
+                "total_articles": 0,
+                "articles": [],
+            }
         if offset >= count or offset < 0 or limit <= 0:
             raise BadRequest("incorrect query parameters")
         if limit > 100:
@@ -57,7 +62,10 @@ class ArticleRepository(Repository):
             offset(offset).\
             limit(limit).all()
         if not articles:
-            return []
+            return {
+                "total_articles": 0,
+                "articles": [],
+            }
         article_list = [article.as_dict() for article in articles]
         return {
             "total_articles": count,
@@ -86,6 +94,11 @@ class AuthorRepository(Repository):
 
     def get_authors(self, offset=0, limit=10):
         count = self._session.query(Author).count()
+        if count == 0:
+            return {
+                "total_authors": 0,
+                "authors": [],
+            }
         if offset >= count or offset < 0 or limit <= 0:
             raise BadRequest("incorrect query parameters")
         if limit > 100:
@@ -93,7 +106,10 @@ class AuthorRepository(Repository):
         authors = self._session.query(Author).\
             offset(offset).limit(limit).all()
         if not authors:
-            return []
+            return {
+                "total_authors": 0,
+                "authors": [],
+            }
         author_list = [author.as_dict() for author in authors]
         return {
             "total_authors": count,
